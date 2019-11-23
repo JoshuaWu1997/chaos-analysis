@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from dual_channel_nash_game_cuda import up_lmt, low_lmt, iter_function
+from dual_channel_nash_game_gpu import up_lmt, low_lmt, iter_function
 
 
 class Bifuracation:
