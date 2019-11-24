@@ -26,10 +26,15 @@ class Bifuracation:
         self.lya_exp = [np.nanmax(self.lya_exp[i].reshape((self.batch_size, -1)), axis=0) for i in range(2)]
 
     def show(self):
+        plt.figure(figsize=(20.48, 10.80))
         plt.subplot(121)
-        plt.scatter(self.x_axis, self.bifu[0], label='p1', color='r', s=1)
-        plt.scatter(self.x_axis, self.bifu[1], label='p2', color='b', s=1)
+        scatter1 = plt.scatter(self.x_axis, self.bifu[0], label='price1', color='r', s=1)
+        scatter2 = plt.scatter(self.x_axis, self.bifu[1], label='price2', color='b', s=1)
+        plt.title('Hopf Bifuracation')
+        plt.legend((scatter1, scatter2), ('price1', 'price2'), loc='upper left')
         plt.subplot(122)
-        plt.plot(self.x_axis[:self.split_num], self.lya_exp[0], label='p1', color='r')
-        plt.plot(self.x_axis[:self.split_num], self.lya_exp[1], label='p2', color='b')
-        plt.show()
+        line1, = plt.plot(self.x_axis[:self.split_num], self.lya_exp[0], label='price1', color='r')
+        line2, = plt.plot(self.x_axis[:self.split_num], self.lya_exp[1], label='price2', color='b')
+        plt.title('Lyapunov Exponent')
+        plt.legend(handles=[line1, line2], loc='upper left')
+        plt.savefig('Hopf_Lyapunov.png')
