@@ -1,5 +1,7 @@
 from numba import cuda
 
+epsilon = 1e-5
+
 up_lmt = 0.5
 low_lmt = 0.001
 
@@ -17,5 +19,6 @@ def gpu_iter(A, B, C, D, iter_num):
 def iter_function(x, y, iter_num):
     threadsperblock = 128
     blockspergrid = (x[0].size + (threadsperblock - 1)) // threadsperblock
-    gpu_iter[blockspergrid, threadsperblock](x[0], x[1], y[0], y[1], iter_num)
+    xx = x + epsilon
+    gpu_iter[blockspergrid, threadsperblock](x[0], x[1], xx[0], xx[1], y[0], y[1], iter_num)
     return x
