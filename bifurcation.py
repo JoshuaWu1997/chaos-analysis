@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from dual_channel_nash_game_gpu import up_lmt, low_lmt, iter_function
+from dual_channel_nash_game_gpu import up_lmt, low_lmt, iter_function, iter_attractor
 
 
 class Bifuracation:
@@ -25,7 +25,14 @@ class Bifuracation:
         self.x_axis = test_points[0]
         self.lya_exp = [np.nanmax(self.lya_exp[i].reshape((self.batch_size, -1)), axis=0) for i in range(2)]
 
-    def show(self):
+    def show_random_attractor(self, k):
+        trajectory = iter_attractor(k, 1000)
+        trajectory = np.array(trajectory)
+        print(trajectory)
+        plt.plot(trajectory[:, 0], trajectory[:, 1])
+        plt.show()
+
+    def show_Hopf_Lyapunov(self):
         plt.figure(figsize=(20.48, 10.80))
         plt.subplot(121)
         scatter1 = plt.scatter(self.x_axis, self.bifu[0], label='price1', color='r', s=1)

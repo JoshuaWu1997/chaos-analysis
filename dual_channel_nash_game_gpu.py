@@ -6,6 +6,22 @@ up_lmt = 0.5
 low_lmt = 0.001
 
 
+def iter_attractor(C, iter_num):
+    p = [np.random.rand() * 2, np.random.rand() * 2]
+    while True:
+        result = []
+        [x, y] = p
+        for i in range(iter_num):
+            xx = x + x * C[0] * (5.25 - 2 * x + 0.25 * y)
+            yy = y + y * C[1] * (4 - 2 * y + 0.5 * x)
+            x = xx
+            y = yy
+            result.append([x, y])
+        if (result[-1][0] is not None) and (abs(result[-1][0] - result[-2][0]) < eps):
+            break
+    return result
+
+
 @cuda.jit
 def gpu_iter(A, B, AA, BB, C, D, iter_num):
     i = cuda.grid(1)
@@ -14,13 +30,11 @@ def gpu_iter(A, B, AA, BB, C, D, iter_num):
         BB[i] = B[i] + eps
         for k in range(1, iter_num):
             p = A[i] + A[i] * C[i] * (5.25 - 2 * A[i] + 0.25 * B[i])
-            pp = AA[i] + AA[i] * C[i] * (5.25 - 2 * AA[i] + 0.25 * BB[i])
-            q = B[i] + B[i] * D[i] * (4 - 2 * B[i] + 0.5 * A[i])
-            qq = BB[i] + BB[i] * D[i] * (4 - 2 * BB[i] + 0.5 * AA[i])
+            pp = AA[i] = AA[i] + AA[i] * C[i] * (5.25 - 2 * AA[i] + 0.25 * BB[i])
+            B[i] = B[i] + B[i] * D[i] * (4 - 2 * B[i] + 0.5 * A[i])
+            BB[i] = BB[i] + BB[i] * D[i] * (4 - 2 * BB[i] + 0.5 * AA[i])
             A[i] = p
             AA[i] = pp
-            B[i] = q
-            BB[i] = qq
 
 
 def iter_function(x, y, iter_num):
