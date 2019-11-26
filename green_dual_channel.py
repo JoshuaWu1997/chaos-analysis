@@ -4,16 +4,16 @@ import numpy as np
 eps = 1e-3
 up_lmt = 0.5
 low_lmt = 0.001
-split_num = 2000
+split_num = 4000
 batch_size = 1000
 es = 20000
 var_name = ['w', 'p', 't']
 test_points = np.array(
     [[
         r * (up_lmt - low_lmt) / split_num + low_lmt, 0.1
-    ] for r in range(split_num)] * batch_size, dtype=np.float32
+    ] for r in range(split_num)] * batch_size, dtype=np.float64
 )
-var = np.array(np.random.rand(batch_size * split_num, 3) * 10, dtype=np.float32)
+var = np.array(np.random.rand(batch_size * split_num, 3) * 10, dtype=np.float64)
 
 a = 3
 b = 1
