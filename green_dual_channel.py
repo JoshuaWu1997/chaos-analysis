@@ -2,34 +2,33 @@ from numba import cuda
 import numpy as np
 
 eps = 1e-3
-up_lmt = 0.6
+up_lmt = 0.1
 low_lmt = 0.01
 split_num = 1000
-batch_size = 40000
+batch_size = 1000
 es = 200000
 var_name = ['w', 'p', 't']
 test_points = np.array(
     [[
-        r * (up_lmt - low_lmt) / split_num + low_lmt, 0.2
+        r * (up_lmt - low_lmt) / split_num + low_lmt,0.2
     ] for r in range(split_num)] * batch_size, dtype=np.float32
 )
 var = np.random.rand(batch_size * split_num, 3) * 10
-var[:, 2] += 10
 var = np.array(var, dtype=np.float32)
 
 a = 3
 b = 1
 c = 1
-'''
 d = 0.12
+
 k1 = 0.15
 k2 = 0.35
 k3 = 0.1
 '''
-d = 0.12
 k1 = 0.2
 k2 = 0.2
 k3 = 0.1
+'''
 
 
 @cuda.jit
@@ -61,6 +60,6 @@ def iter_function(x, xx, y, iter_num):
     lya_exp = [np.abs(x[i] - xx[i]) / eps for i in range(3)]
     lya_exp = np.log(lya_exp)
     x = [np.concatenate((x[i], xx[i])) for i in range(3)]
-    y[0] = np.concatenate((y[0], y[0]))
+    z = np.concatenate((y[0], y[0]))
     sel = x[0] <= x[1] + eps
-    return y[0][sel], [x[i][sel] for i in range(3)], lya_exp
+    return z[sel], [x[i][sel] for i in range(3)], lya_exp

@@ -35,14 +35,17 @@ class Bifuracation:
         '''
 
     def show_Hopf_Lyapunov(self, method='show'):
-        plt.figure(figsize=(16, 9))
-        plt.subplot(121)
+        plt.figure(figsize=(16, 6))
+        plt.subplots_adjust(left=0.05, right=0.95, top=0.95, bottom=0.05)
+        plt.subplot(221)
         scatter = []
         line = []
-        for i in range(len(var_name)):
+        for i in range(len(var_name[:-1])):
             new = plt.scatter(self.a_axis, self.bifu[i], label=var_name[i], s=1)
             scatter.append(new)
         plt.title('Hopf Bifuracation')
+        plt.subplot(223)
+        plt.scatter(self.a_axis, self.bifu[2], label=var_name[2], s=1)
         plt.subplot(122)
         for i in range(len(var_name)):
             new, = plt.plot(self.b_axis[:self.split_num], self.lya_exp[i], label=var_name[i])
