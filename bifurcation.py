@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from green_dual_channel import iter_function, eps, var_name
+from green_dual_channel import iter_function, eps, var_name, get_attractor
+from mpl_toolkits.mplot3d import Axes3D
 
 
 class Bifuracation:
@@ -25,14 +26,28 @@ class Bifuracation:
         self.lya_exp = [np.nanmax(self.lya_exp[i].reshape((self.batch_size, -1)), axis=0) for i in
                         range(len(var))]
 
-    def show_random_attractor(self, k):
-        '''
-        trajectory = iter_attractor(k, 1000)
-        trajectory = np.array(trajectory)
-        print(trajectory)
-        plt.plot(trajectory[:, 0], trajectory[:, 1])
-        plt.show()
-        '''
+    def show_random_attractor(self):
+        points = [0.082, 0.083]
+        trajectory = [get_attractor(0.12, points[i], 0.2, 2000) for i in range(2)]
+        fig = plt.figure(figsize=(16, 6))
+        plt.subplots_adjust(left=0.05, right=0.95, top=0.95, bottom=0.05)
+        for i in range(2):
+            ax = fig.add_subplot(1, 2, i + 1, projection='3d')
+            ax.plot(trajectory[i][:, 0], trajectory[i][:, 1], trajectory[i][:, 2])
+            ax.set_title('lambda=' + str(points[i]))
+        plt.savefig('attractor.png')
+
+    def save_random_attractor(self):
+        points = np.array(range(600, 900)) / 10000
+        print(len(points))
+        trajectory = [get_attractor(0.12, points[i], 0.2, 2000) for i in range(len(points))]
+        for i in range(len(points)):
+            print(i)
+            fig = plt.figure()
+            plt.subplots_adjust(left=0.05, right=0.95, top=0.95, bottom=0.05)
+            ax = Axes3D(fig)
+            ax.plot(trajectory[i][:, 0], trajectory[i][:, 1], trajectory[i][:, 2])
+            plt.savefig('attractor/attractor' + str(points[i]) + '.png')
 
     def show_Hopf_Lyapunov(self, method='show'):
         plt.figure(figsize=(16, 6))

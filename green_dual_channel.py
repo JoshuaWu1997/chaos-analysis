@@ -1,20 +1,22 @@
 from numba import cuda
 import numpy as np
 
-eps = 1e-3
-up_lmt = 0.1
-low_lmt = 0.01
+eps = 1e-5
+up_lmt = 0.08
+low_lmt = 0.077
 split_num = 1000
-batch_size = 1000
+batch_size = 100000
 es = 200000
 var_name = ['w', 'p', 't']
 test_points = np.array(
     [[
-        r * (up_lmt - low_lmt) / split_num + low_lmt,0.2
-    ] for r in range(split_num)] * batch_size, dtype=np.float32
+        r * (up_lmt - low_lmt) / split_num + low_lmt, 0.06
+    ] for r in range(split_num)] * batch_size, dtype=np.float64
 )
 var = np.random.rand(batch_size * split_num, 3) * 10
-var = np.array(var, dtype=np.float32)
+var[:, :-1] += 5
+var[:, 2] = var[:, 2] * 3 + 20
+var = np.array(var, dtype=np.float64)
 
 a = 3
 b = 1
@@ -29,6 +31,26 @@ k1 = 0.2
 k2 = 0.2
 k3 = 0.1
 '''
+
+def get_attractor(d, l, m, iter_num):
+    j = True
+    while j:
+        tra = []
+        p0 = np.random.rand(3) * 10
+        for i in range(iter_num):
+            x = p0[0] + p0[0] * k1 * (a - b * p0[1] + (l + d) * p0[2])
+            y = p0[1] + p0[1] * k2 * (a - 2 * b * p0[1] + (l + d) * p0[2] + b * p0[0])
+            p0[2] = p0[2] + p0[2] * k3 * ((l + d) * p0[0] + l * p0[1] - m * p0[2] - c * (2 * l + d))
+            p0[0] = x
+            p0[1] = y
+            if i > iter_num - 100:
+                if np.isnan(x):
+                    j = True
+                    break
+                else:
+                    tra.append(np.array(p0))
+                    j = False
+    return np.array(tra)
 
 
 @cuda.jit
@@ -62,4 +84,6 @@ def iter_function(x, xx, y, iter_num):
     x = [np.concatenate((x[i], xx[i])) for i in range(3)]
     z = np.concatenate((y[0], y[0]))
     sel = x[0] <= x[1] + eps
+    sel = np.logical_and(sel, x[0] > 0)
+    sel = np.logical_and(sel, x[1] < 15)
     return z[sel], [x[i][sel] for i in range(3)], lya_exp
