@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from green_dual_channel import iter_function, eps, var_name, get_attractor
+from models.green_dual_channel import iter_function, eps, var_name, get_attractor
 from mpl_toolkits.mplot3d import Axes3D
 
 

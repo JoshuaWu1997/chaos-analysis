@@ -11,23 +11,6 @@ test_points = np.array(
     dtype=np.float32)
 var = np.array(np.random.rand(batch_size * split_num, 2) * 10, dtype=np.float32)
 
-'''
-def iter_attractor(C, iter_num):
-    p = [np.random.rand() * 2, np.random.rand() * 2]
-    while True:
-        result = []
-        [x, y] = p
-        for i in range(iter_num):
-            xx = x + x * C[0] * (5.25 - 2 * x + 0.25 * y)
-            yy = y + y * C[1] * (4 - 2 * y + 0.5 * x)
-            x = xx
-            y = yy
-            result.append([x, y])
-        if (result[-1][0] is not None) and (abs(result[-1][0] - result[-2][0]) < eps):
-            break
-    return result
-'''
-
 
 @cuda.jit
 def gpu_iter(A, B, AA, BB, C, D, iter_num):

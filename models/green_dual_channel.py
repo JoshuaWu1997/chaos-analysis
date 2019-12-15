@@ -32,6 +32,7 @@ k2 = 0.2
 k3 = 0.1
 '''
 
+
 def get_attractor(d, l, m, iter_num):
     j = True
     while j:
